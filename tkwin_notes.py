@@ -3,15 +3,29 @@ import tkinter as tk
 from tkinter import ttk
 from lib_commun import ouverture_fichier_csv,ecriture_fichier_csv
 from lib_gestionNotes import ajoutNote,modificationNote,suppressionNote
+from tkinter import messagebox
 
 def ajout(master,id_etudiant, annee, matiere, note):
     id_ = id_etudiant.get()
     annee_ = annee.get()
     mat_ = matiere.get()
     note_ = note.get()
-    ajoutNote(id_, annee_, mat_, note_)
 
-    tableau(master)
+    if id_ == "":
+        messagebox.showerror("Erreur de ID", "Aucun ID n'est renseigné.")
+        pass
+    elif annee_ == "":
+        messagebox.showerror("Erreur d'année", "Aucune année n'est renseignée.")
+        pass
+    elif mat_ == "":
+        messagebox.showerror("Erreur de matière", "Aucune matière n'est renseignée.")
+        pass
+    elif note_ == "":
+        messagebox.showerror("Erreur de note", "Aucune note n'est renseignée.")
+        pass
+    else:
+        ajoutNote(id_, annee_, mat_, note_)
+        tableau(master)
 
 def modifier(master,id_etudiant, annee, matiere, note):
     id_ = id_etudiant.get()
@@ -59,7 +73,7 @@ def run_win_notes(master):
     nw = tk.Toplevel(master)
     nw.title("Gestion notes")
 
-    nw.geometry("640x400")
+    nw.geometry("1200x640")
 
     #Affiche le tableau des notes
     tableau(nw)
@@ -73,16 +87,24 @@ def run_win_notes(master):
     label_annee.place(relx=0.1, rely=0.1, relwidth=0.3, relheight=0.1)
 
     # Entry value annee
-    entry_annee = tk.Entry(note_frame , highlightbackground="grey", highlightthickness=1)
+    AnneeDefault = tk.StringVar(note_frame, value='2021/2022')
+    entry_annee = tk.Entry(note_frame ,textvariable=AnneeDefault, highlightbackground="grey", highlightthickness=1)
     entry_annee.place(relx=0.55, rely=0.1, relwidth=0.3, relheight=0.1)
+
 
     # Text matiere
     label_matiere = tk.Label(note_frame, text="Matière",font=("Helvica",15),bg="white",relief="flat")
     label_matiere.place(relx=0, rely=0.25, relwidth=0.5, relheight=0.1)
 
     # Entry value matiere
-    entry_matiere = tk.Entry(note_frame , highlightbackground="grey", highlightthickness=1)
-    entry_matiere.place(relx=0.55, rely=0.25, relwidth=0.3, relheight=0.1)
+    #entry_matiere = tk.Entry(note_frame , highlightbackground="grey", highlightthickness=1)
+    #entry_matiere.place(relx=0.55, rely=0.25, relwidth=0.3, relheight=0.1)
+
+    ComboMatiere = ttk.Combobox(note_frame,
+                                values=ouverture_fichier_csv("matieres.csv"))
+    print(dict(ComboMatiere))
+    ComboMatiere.place(relx=0.55, rely=0.25, relwidth=0.3, relheight=0.1)
+    ComboMatiere.current(1)
 
     # Text note
     label_note = tk.Label(note_frame, text="Note", font=("Helvica", 15),bg="white",relief="flat")
@@ -102,11 +124,11 @@ def run_win_notes(master):
     entry_id_etudiant.place(relx=0.55, rely=0.55, relwidth=0.3, relheight=0.1)
 
     # Bouton ajouter
-    btn_ajouter = tk.Button(note_frame,text="Ajouter", command=lambda:ajout(nw,entry_id_etudiant,entry_annee,entry_matiere,entry_note))
+    btn_ajouter = tk.Button(note_frame,text="Ajouter", command=lambda:ajout(nw,entry_id_etudiant,entry_annee,ComboMatiere,entry_note))
     btn_ajouter.place(relx=0.1, rely=0.70, relwidth=0.35, relheight=0.1)
 
     # Bouton modifier
-    btn_modifier = tk.Button(note_frame,text="Modifier", command=lambda:modifier(nw,entry_id_etudiant,entry_annee,entry_matiere,entry_note))
+    btn_modifier = tk.Button(note_frame,text="Modifier", command=lambda:modifier(nw,entry_id_etudiant,entry_annee,ComboMatiere,entry_note))
     btn_modifier.place(relx=0.55, rely=0.70, relwidth=0.35, relheight=0.1)
 
     # Bouton supprimer

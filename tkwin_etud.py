@@ -1,8 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
-from lib_commun import ouverture_fichier_csv,ecriture_fichier_csv
+from lib_commun import ouverture_fichier_csv
 from lib_gestionEtudiants import ajoutEtudiant,modificationEtudiant,suppressionEtudiant
 from tkinter import messagebox
+import time
 
 def valider(master,prenom,nom,genre,email,groupe):
     """
@@ -20,22 +21,28 @@ def valider(master,prenom,nom,genre,email,groupe):
 
     if prenom == "":
         messagebox.showerror("Erreur de prenom", "Aucun prénom n'est renseigné.")
+
         pass
 
     elif nom == "":
         messagebox.showerror("Erreur de prenom", "Aucun nom n'est renseigné.")
+
         pass
 
     elif email == "":
         messagebox.showerror("Erreur de email", "Aucun email n'est renseigné.")
+
         pass
 
     elif groupe == "":
         messagebox.showerror("Erreur de groupe", "Aucun groupe n'est renseigné.")
+
         pass
 
     else:
-        ajoutEtudiant(prenom,nom,genre,email,groupe)
+        ajoutEtudiant(prenom, nom, genre, email, groupe)
+
+
         print(prenom,nom,genre,email,groupe)
         tableau(master)
 
@@ -61,8 +68,21 @@ def supprimer(master,id):
         Elle réactualise le tableau à la fin
 
           En somme elle permet de supprimer un étudiant"""
-    suppressionEtudiant(id.get())
-    tableau(master)
+    nombre_etud = len(ouverture_fichier_csv("etudiants.csv")) - 1
+    if int(id.get()) <= nombre_etud :
+
+        note_suppr = suppressionEtudiant(id.get())
+        print(note_suppr)
+        message_note = str()
+        for i in note_suppr:
+            message_note += "La note supprimée en {} est {}.\n".format(i[3],i[4])
+        print(message_note)
+        messagebox.showinfo("Liste des notes supprimées", message_note)
+        time.sleep(1)
+        tableau(master)
+    else:
+        messagebox.showerror("Erreur d'ID", "L'id renseigné est trop grand.")
+
 #Tableau étudiant
 
 def tableau(master):
@@ -71,6 +91,7 @@ def tableau(master):
     tab = ttk.Treeview(master)
     tab.place(relx= 0.35,rely=0.05,relheight=0.85,relwidth= 0.55)
     data_tab = ouverture_fichier_csv("etudiants.csv")
+
     tab['column'] = data_tab[0]
     width_column = [1,1,45,45,120,20] #Largeur des colonnes
 

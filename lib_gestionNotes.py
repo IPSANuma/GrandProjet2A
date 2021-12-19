@@ -11,26 +11,54 @@ def ajoutNote(id_etudiant, annee, matiere, note):
     nv_data = []
     id_data = []
     data = ouverture_fichier_csv("notes.csv")
-    id_ = 1
-    for j in range(1, len(data)):
+
+
+    indexmat = 0
+
+    for i in range(1,len(data)):
+
+        if data[i][3] == matiere:
+            break
+        indexmat += 1
+
+    for i in range(indexmat,len(data)):
+
+        if data[i][2] == id_etudiant:
+            break
+        indexmat += 1
+
+    """k = indexmat
+    for i in range(indexmat,len(data)):
+        k += 1
+
+        if data[i][3] == matiere:
+            k += 1
+    print(k)"""
+
+    id_ = indexmat
+    """for j in range(1, len(data)):
         id_data.append(int(data[j][0]))
     for k in id_data:
         while id_ == k:
-            id_ += 1
-    '''for i in range(1, len(data)):
-        if data[i][4] == email:
-            print("Cet étudiant existe déjà")
-            nv_data.clear()
-            return'''
+            id_ += 1"""
     nv_data.insert(0, id_)
     nv_data.insert(1, str(annee))
     nv_data.insert(2, id_etudiant)
     nv_data.insert(3, str(matiere))
     nv_data.insert(4, str(note))
-    data.insert(id_ + 1, nv_data)
+    data.insert(indexmat+ 1, nv_data)
+
+    for l in range(1,len(data)):
+
+        data[l][0] = l-1
+
+    data[0][0] = "ID"
     ecriture_fichier_csv(data, "notes.csv")
     nv_data.clear()
-    return
+
+
+
+
 
 
 def modificationNote(id_etudiant, annee, matiere, note):
